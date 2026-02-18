@@ -1,3 +1,4 @@
 fastapi-env/
 .env
 __pycache__/
+ref-docs/

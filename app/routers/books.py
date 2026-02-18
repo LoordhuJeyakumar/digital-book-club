@@ -30,12 +30,18 @@ def get_book(book_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=Book, status_code=status.HTTP_201_CREATED)
 def create_book(book: BookCreate, db: Session = Depends(get_db)):
-    """Add a new book to the database"""
-    new_book = BookModel(**book.dict())
-    db.add(new_book)
-    db.commit()
-    db.refresh(new_book)
-    return new_book
+    try:
+        """Add a new book to the database"""
+        new_book = BookModel(**book.dict())
+        db.add(new_book)
+        db.commit()
+        db.refresh(new_book)
+        return new_book
+    except Exception as e: #Exception is a base class for all exceptions.
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error creating book: {e.args[0]}" #e is the exception object.
+        )
 
 @router.put("/{book_id}", response_model=Book)
 def update_book(book_id: int, updated_fields: BookUpdate, db: Session = Depends(get_db)):

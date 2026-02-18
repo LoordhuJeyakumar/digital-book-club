@@ -6,6 +6,6 @@ from .database import SessionLocal
 def get_db():
     db = SessionLocal()
     try:
-        yield db
+        yield db #yield is a keyword in Python that is used to return a generator object.
     finally:
         db.close()
