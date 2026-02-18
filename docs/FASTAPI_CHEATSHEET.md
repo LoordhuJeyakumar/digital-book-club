@@ -1,60 +1,64 @@
-# ⚡ FastAPI Cheatsheet
+# ⚡ FastAPI & SQLAlchemy Cheatsheet
 
-A quick reference for building our Digital Book Club! 🚀
+A quick reference for our modular Digital Book Club! 🚀
 
 ---
 
 ### 🚦 Common HTTP Status Codes
-Think of these as **Status Reports** from the Librarian:
-
 | Code | Meaning | Plain English |
 | :--- | :--- | :--- |
-| **200** | **OK** | "Here is the book you asked for!" ✅ |
-| **201** | **Created** | "Success! I've added the new book to the shelf!" ✨ |
-| **400** | **Bad Request** | "Your request is confusing; please check the form again." 🤨 |
-| **401** | **Unauthorized** | "You need a library card (login) to do this!" 🔑 |
-| **404** | **Not Found** | "We checked everywhere, but that book doesn't exist." 🕵️‍♂️ |
-| **500** | **Internal Server Error** | "Oops! The librarian tripped. Something went wrong on our end." 🔥 |
+| **200** | **OK** | "Success!" ✅ |
+| **201** | **Created** | "Success! Item added!" ✨ |
+| **404** | **Not Found** | "We can't find that." 🕵️‍♂️ |
+| **422** | **Validation Error** | "The data you sent is wrong." 🤨 |
 
 ---
 
-### 💻 FastAPI "Decorator" Syntax
-Decorators tell FastAPI which **URL** and which **Action** should trigger your code.
+### 🗄️ Database Operations (SQLAlchemy)
+Use these inside your route functions to talk to MySQL:
 
 ```python
-from fastapi import FastAPI
+# 1. Get all items
+items = db.query(BookModel).all()
 
-app = FastAPI()
+# 2. Find one by ID
+item = db.query(BookModel).filter(BookModel.id == 5).first()
 
-# 1. GET: Read data
-@app.get("/books")
-def get_all_books():
-    return {"message": "Listing all books"}
+# 3. Create a new item
+new_item = BookModel(title="1984", author="Orwell")
+db.add(new_item)
+db.commit()      # Save to database
+db.refresh(new_item) # Get the new ID from DB
 
-# 2. POST: Create data
-@app.post("/books")
-def add_book():
-    return {"message": "Book added!"}
-
-# 3. GET with ID (Path Parameter)
-@app.get("/books/{book_id}")
-def get_one_book(book_id: int):
-    return {"book_id": book_id}
+# 4. Delete an item
+db.delete(item)
+db.commit()
 ```
 
 ---
 
-### 🚀 Starting Your Server
-To bring your API to life, use the **Uvicorn** command in your terminal:
+### 💉 Dependency Injection
+How to get the database session in your routes:
+
+```python
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from ..db import get_db
+
+@router.get("/books")
+def my_route(db: Session = Depends(get_db)):
+    # Now you can use 'db' here!
+```
+
+---
+
+### 🚀 Running the App
+Since we moved code to the `app/` folder, run from the root:
 
 ```bash
-# Basic command
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
-*   `main`: The name of your Python file (`main.py`).
-*   `app`: The name of the FastAPI object inside that file.
-*   `--reload`: **MAGIC!** The server will automatically restart every time you save your code. 🧙‍♂️
 
 ---
 
-**Tip:** Once your server is running, visit `http://127.0.0.1:8000/docs` to see your interactive documentation! 📄✨
+**Pro Tip:** Use `model_config = {"from_attributes": True}` in your Pydantic schemas so they can read data directly from SQLAlchemy models! 🧙‍♂️
