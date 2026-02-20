@@ -25,8 +25,22 @@ Welcome to the **Digital Book Club API** project! 🚀 Over the next 5 days, we'
 *   **RBAC:** Deciding who can delete a book (Admin) vs. just reading it (User).
 *   **Activity:** Lock down your API so only club members can enter!
 
-### 🗓️ Day 5: Deployment & Documentation (Show the World)
+### 🗓️ Day 5: The Reviewer's Bench (Engagement)
+*   **Reviews & Ratings:** Allowing members to share their thoughts.
+*   **Favorites:** Bookmarking books for later.
+*   **Ownership:** Ensuring only you can edit your own reviews.
+
+### 🗓️ Day 6: The Booking Ledger (Business Logic)
+*   **Availability:** Tracking which books are on the shelf and which are borrowed.
+*   **Reservations:** Creating a system to "Book" a book for a specific time.
+*   **Relationships:** Linking Users to Books via a third "Booking" table.
+
+### 🗓️ Day 7: The Global Passport (Social Login)
+*   **OAuth2:** "Login with Google/GitHub".
+*   **Hybrid Auth:** Supporting both local passwords and social logins.
+*   **External APIs:** Talking to Google's servers to verify identities.
+
+### 🗓️ Day 8: Deployment & Documentation (Show the World)
 *   **Swagger UI:** FastAPI's built-in interactive documentation.
-*   **Deployment:** Moving your API from your laptop to the cloud.
-*   **Project Audit:** Checking for clean code and final testing.
-*   **Activity:** Share your API link with friends! 🌟
+*   **Final Audit:** Cleaning up code and final end-to-end testing.
+*   **Showcase:** Share your professional, multi-feature API! 🌟
