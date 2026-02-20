@@ -10,32 +10,25 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 @router.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     """
-    Register a new user (Sign Up)
-    1. Check if email already exists
-    2. Hash the password
-    3. Save to database
+    The 'Sign Up' Counter 📝
+    - Input: User sends an email and a password.
+    - Logic: We check if the email is taken, scramble the password, and save to DB.
+    - Output: We return the user info (minus the password!).
     """
+    # Check if this person already has a library card
     db_user = db.query(UserModel).filter(UserModel.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-
-    if user.role not in [UserRole.ADMIN, UserRole.MEMBER]:
-        raise HTTPException(status_code=400, detail="Invalid role")
-
-    if user.role == UserRole.ADMIN:
-        raise HTTPException(status_code=400, detail="Admin registration is not allowed")
-
-    role = UserRole.MEMBER
-    if user.role == UserRole.ADMIN:
-        role = UserRole.ADMIN
-
-    if user.role == UserRole.MEMBER:
-        role = UserRole.MEMBER
-
     
-    
+    # Scramble the password so only the user knows the original
     hashed_pwd = get_password_hash(user.password)
-    new_user = UserModel(email=user.email, hashed_password=hashed_pwd, role=role)
+    
+    # Save the new user to the database
+    new_user = UserModel(
+        email=user.email, 
+        hashed_password=hashed_pwd, 
+        role=user.role
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -44,19 +37,22 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login", response_model=Token)
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     """
-    Login to get an Access Token (Sign In)
-    1. Find user by email
-    2. Check if password matches hash
-    3. Issue JWT token
+    The 'Identity Check' 🔑
+    - Input: User sends login credentials.
+    - Logic: Search for user, verify if password matches the scramble.
+    - Output: Issue a Digital Wristband (JWT Access Token).
     """
+    # Find the user by their email
     user = db.query(UserModel).filter(UserModel.email == user_credentials.email).first()
     
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+    # If user doesn't exist OR password is wrong, keep the door locked 🔒
+    if not user or not verify_password(user_credentials.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     
-    if not verify_password(user_credentials.password, user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
-    
-    
+    # Create the Digital Wristband!
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}

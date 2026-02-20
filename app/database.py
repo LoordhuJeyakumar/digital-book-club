@@ -20,7 +20,11 @@ Base = declarative_base()
 
 # --- GET_DB DEPENDENCY ---
 # This is our "Librarian's Session". 
-# It opens the cabinet, lets us work, and CLOSES it when we are done.
+# Workflow: 
+# 1. Open the cabinet (db = SessionLocal())
+# 2. Hand it to the route (yield db)
+# 3. Wait for the work to finish.
+# 4. Close it (db.close()) so we don't leave doors open!
 def get_db():
     db = SessionLocal()
     try:
