@@ -10,6 +10,7 @@ class Book(BaseModel):
     author: str = Field(..., example="F. Scott Fitzgerald")
     pages: int = Field(..., gt=0, example=180)
     is_read: bool = False
+    is_available: bool = True
 
     model_config = {
         "from_attributes": True

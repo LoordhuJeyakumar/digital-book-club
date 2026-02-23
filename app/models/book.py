@@ -13,3 +13,6 @@ class BookModel(Base):
     author = Column(String(100), nullable=False)
     pages = Column(Integer)
     is_read = Column(Boolean, default=False)
+    
+    # 📚 New: Is the book currently on the shelf?
+    is_available = Column(Boolean, default=True, nullable=False)
