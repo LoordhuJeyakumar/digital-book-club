@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from .routers import books, auth
+from .routers import books, auth, reviews
 from .database import engine, Base
-from .models import book, user  # Ensure models are imported for create_all
+from .models import book, user, review  # Ensure models are imported for create_all
 
 # Create the tables (The "Librarian" building the shelves)
 # In professional apps, we use 'Alembic' for this, but for now, this is perfect!
@@ -16,6 +16,7 @@ app = FastAPI(
 # Connect our Routers (The sections of the library)
 app.include_router(auth.router)
 app.include_router(books.router)
+app.include_router(reviews.router)
 
 @app.get("/", tags=["General"])
 def read_root():
