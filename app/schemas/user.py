@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 from app.models.user import UserRole
 
@@ -12,8 +13,9 @@ class UserCreate(UserBase):
     The 'Sign Up' form.
     Input: What the user sends when creating an account.
     """
-    password: str
+    password: Optional[str] = None
     role: UserRole = UserRole.MEMBER
+
 
 
 class UserLogin(BaseModel):

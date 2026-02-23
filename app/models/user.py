@@ -27,7 +27,12 @@ class UserModel(Base):
     email = Column(String(100), unique=True, index=True, nullable=False)
     
     # The SCRAMBLED (hashed) version of their password - never plain text!
-    hashed_password = Column(String(255), nullable=False)
+    # (Nullable now, because Google users don't need a password!)
+    hashed_password = Column(String(255), nullable=True)
     
     # Their job title in the club (defaults to Member)
     role = Column(SAEnum(UserRole), default=UserRole.MEMBER, nullable=False)
+
+    # 🌍 Social Login Tracking
+    oauth_provider = Column(String(50), nullable=True) # e.g., "google"
+    oauth_id = Column(String(255), unique=True, index=True, nullable=True)
