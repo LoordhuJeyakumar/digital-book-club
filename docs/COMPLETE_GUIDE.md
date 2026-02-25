@@ -81,6 +81,7 @@ We have four main tables in our database, fully linked via foreign keys.
 2.  **`get_current_user` Dependency**: This function runs *before* protected routes. It decrypts the JWT, ensures it's valid, looks up the user in the database, and injects that `User` object directly into the route function.
 3.  **RoleChecker (RBAC)**: A custom class that acts as a bouncer. Used on the Book creation/deletion routes, it checks `user.role == "admin"`. If not, it throws a `403 Forbidden` error.
 4.  **Ownership Logic**: Seen in the Review system. Before deleting a review, code explicitly checks `if review.user_id != active_user.id`.
+5.  **CORS (Cross-Origin Resource Sharing)**: This is the "Security Guard" in `main.py` that allows your API to talk to frontends (like React or Vue) running on different URLs. Without this, the browser would block the connection for security reasons.
 
 ---
 

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from .routers import books, auth, reviews, bookings
 from .database import engine, Base
 from .models import book, user, review, booking  # Ensure models are imported for create_all
@@ -13,11 +14,30 @@ app = FastAPI(
     version="3.0.0"
 )
 
+# --- THE SECURITY GUARD (CORS) ---
+# This allows our API to talk to frontends from other buildings (URLs).
+origins = [
+    "http://localhost:3000",    # React
+    "http://localhost:5173",    # Vite
+    "http://127.0.0.1:5173",
+    "*"
+    # "*" # The "Open Door" policy (Use with caution!)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"], # Allow all headers
+)
+
 # Connect our Routers (The sections of the library)
 app.include_router(auth.router)
 app.include_router(books.router)
 app.include_router(reviews.router)
 app.include_router(bookings.router)
+
 
 @app.get("/", tags=["General"])
 def read_root():
